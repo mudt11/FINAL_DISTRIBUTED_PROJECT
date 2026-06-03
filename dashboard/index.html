@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Partition Tolerance (Split-Brain) Test: "Key-Value Store"</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <h1>Partition Tolerance (Split-Brain) Test: "Key-Value Store</h1>
+        <div class="author">Sinh viên thực hiện: Huỳnh Đình Thạch </div>
+
+        <div id="netStatus" class="network-banner normal">TRẠNG THÁI HỆ THỐNG: BÌNH THƯỜNG (Mạng Toàn Vẹn - 5 Nodes
+            Đồng Bộ)</div>
+
+        <div class="control-panel">
+            <div class="input-group">
+                <label>Mã Sản Phẩm: </label>
+                <input type="text" id="prodIdInput" value="P0001" onchange="fetchClusterData()">
+            </div>
+            <button class="btn-blue" onclick="fetchClusterData()">Đọc Dữ Liệu Toàn Cụm</button>
+            <button class="btn-danger" onclick="triggerPartition()">Mô Phỏng Lỗi Mạng (Split-Brain)</button>
+            <button class="btn-success" onclick="triggerHeal()">Khôi Phục & Áp Dụng Majority Rule</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Phân Đoạn Mạng (Partition Group)</th>
+                    <th>Node ID</th>
+                    <th>Cổng Vật Lý (Port)</th>
+                    <th>Số Lượng Tồn Kho Hiện Tại (Stock Level)</th>
+                    <th>Thao Tác Ghi (Write Simulation)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="minority-row">
+                    <td rowspan="2" style="color: #fca5a5; font-weight: bold;">Cụm Thiểu Số (Minority Quorum < 3)</td>
+                    <td>Node 1</td>
+                    <td>5001</td>
+                    <td id="stock1">-</td>
+                    <td rowspan="2"><button class="btn-danger" onclick="executeWrite(1, 2)">Trừ 2 SP (Ghi Cụm Thiểu
+                            Số)</button></td>
+                </tr>
+                <tr class="minority-row">
+                    <td>Node 2</td>
+                    <td>5002</td>
+                    <td id="stock2">-</td>
+                </tr>
+                <tr class="majority-row">
+                    <td rowspan="3" style="color: #86efac; font-weight: bold;">Cụm Đa Số (Majority Quorum &ge; 3)</td>
+                    <td>Node 3</td>
+                    <td>5003</td>
+                    <td id="stock3">-</td>
+                    <td rowspan="3"><button class="btn-success" onclick="executeWrite(3, 5)">Trừ 5 SP (Ghi Cụm Đa
+                            Số)</button></td>
+                </tr>
+                <tr class="majority-row">
+                    <td>Node 4</td>
+                    <td>5004</td>
+                    <td id="stock4">-</td>
+                </tr>
+                <tr class="majority-row">
+                    <td>Node 5</td>
+                    <td>5005</td>
+                    <td id="stock5">-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div
+            style="margin-top: 15px; padding: 12px; background-color: #1f2937; color: #10b981; border-radius: 6px; font-family: monospace; font-size: 16px; border: 1px solid #374151;">
+            Performance Metrics - Độ trễ giao dịch gần nhất (Latency):
+            <span id="latencyDisplay" style="font-weight: bold; color: #fbbf24; font-size: 18px;">0 ms</span>
+        </div>
+
+        <div class="console-box" id="consoleLog">[SYSTEM] Trạng thái hệ thống sẵn sàng. Vui lòng nhấn nút Đọc dữ liệu...
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+*.sqlite3
+
+logs/
+
+__pycache__/
+*.pyc
+
+
+.vscode/
