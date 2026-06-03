@@ -67,27 +67,33 @@ def trigger_node_recovery():
         "message": f"Node {NODE_ID} đã thực hiện Catch-up toàn bộ sản phẩm thành công."
     })
 
+
 def recover_data():
     print(f"[*] Node {NODE_ID} đang khởi động... Xin dữ liệu chuẩn từ Controller...")
+
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("SELECT product_id FROM products")
     products = cur.fetchall()
-    
-    recovered_count = 0
+    conn.close() 
+
+    updates = []
     for (p_id,) in products:
         try:
             res = requests.get(f"{CONTROLLER_URL}/recovery/{NODE_ID}/{p_id}", timeout=0.5)
             if res.status_code == 200:
                 correct_stock = res.json().get("stock")
-                cur.execute("UPDATE products SET stock=? WHERE product_id=?", (correct_stock, p_id))
-                recovered_count += 1
+                updates.append((correct_stock, p_id)) 
         except:
-            pass 
-            
-    conn.commit()
-    conn.close()
-    print(f"[+] Phục hồi hoàn tất. Đã đồng bộ {recovered_count} sản phẩm với mạng lưới.")
+            continue
+
+    if updates:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.executemany("UPDATE products SET stock=? WHERE product_id=?", updates)
+        conn.commit()
+        conn.close()
+        print(f"[*] Node {NODE_ID} đã catch-up thành công {len(updates)} bản ghi.")
 
 recover_data()
 
