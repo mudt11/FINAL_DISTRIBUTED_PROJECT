@@ -86,19 +86,14 @@ async function executeWrite(targetNode, amount) {
 
     const pId = document.getElementById('prodIdInput').value.trim();
 
-    let currentStock = NaN;
-    for (let i = 1; i <= 5; i++) {
-        let val = parseInt(document.getElementById(`stock${i}`).innerText);
-        if (!isNaN(val)) {
-            currentStock = val;
-            break;
-        }
-    }
+    let stockText = document.getElementById(`stock${targetNode}`).innerText;
 
-    if (isNaN(currentStock)) {
-        alert("Toàn bộ hệ thống đã sập, không thể đọc được dữ liệu gốc!");
+    if (stockText === 'LỖI' || stockText === 'DOWN' || stockText === '-') {
+        alert(`Node ${targetNode} đang lỗi hoặc chưa có dữ liệu, không thể thực hiện giao dịch!`);
         return;
     }
+
+    let currentStock = parseInt(stockText);
 
     let newStock = currentStock - amount;
     printLog(`[WRITE] Khởi tạo giao dịch cập nhật kho hàng: ${currentStock} -> ${newStock}`);
